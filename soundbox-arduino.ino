@@ -1,9 +1,9 @@
 #include <Bounce2.h>
 
 const int buttonStart = 2;
+const int shiftButton = 10;
 const int buttonNumber = 11;
 bool buttonsPressed[buttonNumber];
-int buttonValues[buttonNumber];
 Bounce debouncer[buttonNumber];
 
 void setup() {
@@ -19,12 +19,22 @@ void setup() {
 }
 
 void loop(){
-   for (int i=0; i<buttonNumber; i++) {
+   debouncer[shiftButton].update();
+   if (debouncer[shiftButton].read() == LOW){
+     if (!buttonsPressed[shiftButton]) {
+       buttonsPressed[shiftButton] = true;
+     }
+   } else {
+     buttonsPressed[shiftButton] = false;
+   }
+   for (int i=0; i<buttonNumber-1; i++) {
      debouncer[i].update();
      if (debouncer[i].read() == LOW){
        if (!buttonsPressed[i]) {
          buttonsPressed[i] = true;
-         Serial.println( i );
+         int value = i;
+         if (buttonsPressed[shiftButton]) { value += 10; }
+         Serial.println(value);
        }
      } else {
        buttonsPressed[i] = false;
